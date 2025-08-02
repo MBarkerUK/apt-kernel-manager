@@ -16,7 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: ShellCheck (Bash)
+      - name: Setup ShellCheck (Bash)
         run: |
           sudo apt-get install shellcheck
+
+      - name: ShellCheck Scan (Bash)
+        shell: bash
+        run: |
           shellcheck *.sh
