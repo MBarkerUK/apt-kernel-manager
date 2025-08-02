@@ -12,15 +12,15 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup ShellCheck (Bash)
         run: |
-          sudo apt-get install shellcheck
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
 
       - name: ShellCheck Scan (Bash)
         shell: bash
         run: |
-          shellcheck **/*.sh
+          find . -type f -name "*.sh" -print0 | xargs -0 shellcheck
