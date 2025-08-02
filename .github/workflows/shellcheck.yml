@@ -1,0 +1,22 @@
+name: Shell Script Security
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: ShellCheck (Bash)
+        run: |
+          sudo apt-get install shellcheck
+          shellcheck *.sh
