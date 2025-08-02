@@ -23,4 +23,31 @@ jobs:
       - name: ShellCheck Scan (Bash)
         shell: bash
         run: |
-          find . -type f -name "*.sh" -print0 | xargs -0 shellcheck
+          # Use a temporary file to capture ShellCheck output
+          output_file="shellcheck_output.txt"
+
+          # Run shellcheck and redirect its output to the temporary file
+          # We also check if any .sh files exist before running shellcheck
+          if find . -type f -name "*.sh" -print0 | grep -q .; then
+            echo "Scanning shell scripts for issues..."
+            find . -type f -name "*.sh" -print0 | xargs -0 shellcheck > "$output_file" 2>&1
+            # ^ Redirect stdout and stderr to the output file
+
+            # Check if the output file is empty
+            if [ -s "$output_file" ]; then
+              # If file is not empty, it means shellcheck found issues or produced other output
+              echo "--- ShellCheck Issues Found ---"
+              cat "$output_file" # Print the captured output
+              echo "------------------------------"
+              exit 1 # Fail the step if issues were found
+            else
+              # If file is empty, no issues were found by shellcheck
+              echo "✅ ShellCheck completed: No issues found in shell scripts."
+            fi
+          else
+            # No .sh files found
+            echo "ℹ️ No shell scripts (.sh files) found to scan."
+          fi
+
+          # Clean up the temporary file (optional, but good practice)
+          rm -f "$output_file"
